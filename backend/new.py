@@ -3,10 +3,6 @@ import sys
 import os
 import random
 import numpy as np
-# from PyQt5 import QtWidgets
-# from PyQt5.QtGui import QFont
-# from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-# from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 from datetime import datetime
 
@@ -329,6 +325,7 @@ class Task:
         i_2 = [i for i in range(len(self.x_list)) if self.y_list.count(self.y_list[i]) == 2]
         pos = random.choice(i_2)
         self.y_2 = self.y_list[pos]
+        self.x_2 = self.x_list[pos]  
         self.correct_2 = sorted([self.x_list[i] for i in i_2 if self.y_list[i] == self.y_2])
 
         # 3 intersections
@@ -350,7 +347,8 @@ class Task:
         if len(triple_x) == 101:
             start_x = int(triple_x[0])
             end_x = start_x + 1
-            self.correct_more = f"[{start_x};{end_x/2}]"
+            self.correct_more = f"[{start_x};{end_x}]"
+            self.answer_more = f"{round(start_x + (end_x - start_x) / 2, 2)}"
         elif len(triple_x) == 102:
             if triple_x[0] + 0.01 == triple_x[1]:
                 start_x = int(triple_x[0])
@@ -359,13 +357,16 @@ class Task:
                 start_x = int(triple_x[1])
                 oneMoreX = "{" + str(int(triple_x[0])) + "}"
             end_x = start_x + 1
-            self.correct_more = f"[{start_x};{end_x/2}] U {oneMoreX}"
+            self.correct_more = f"[{start_x};{end_x}] U {oneMoreX}"
+            self.answer_more = f"{round(start_x + (end_x - start_x) / 2, 2)}"
+
         else:
             self.correct_more = ""
+            self.answer_more = ""
 
     def get_question_data(self):
-        print(self.correct_more)
-        return self.y_2, self.start_x_3, self.end_x_3, self.correct_more[-2]
+        # print(self.correct_more)
+        return self.x_2, self.start_x_3, self.end_x_3, self.answer_more
 
     def check_answers(self, user_2, user_3, user_more):
         # print('cor 1:', self.get_correct_ans_1())
@@ -380,154 +381,4 @@ class Task:
         result_3 = len(self.correct_3) == 0 or (len(user_3) == 3 and set([round(eval(expr, {"x": self.correct_3[0]}), 2) for expr in user_3]) == set(self.correct_3))
         
         result_more = set(user_more.replace(' ', '').split('U')) == set(self.correct_more.replace(' ', '').split('U'))
-        # user_more = user_more.replace(" ", "")
-        # if self.correct_more:
-        #     if "U" in self.correct_more:
-        #         expected = sorted(self.correct_more.split("U"))
-        #         user_split = sorted(user_more.split("U"))
-        #         result_more = user_split == expected
-        #     else:
-        #         result_more = user_more == self.correct_more
-        # else:
-        #     result_more = not user_more
         return result_2, result_3, result_more
-
-# class GraphWindow(QtWidgets.QWidget):
-#     def __init__(self, task):
-#         super().__init__()
-#         self.task = task
-#         self.x_list, self.y_list = self.task.get_graph_data()
-#         self.figure = Figure()
-#         self.canvas = FigureCanvas(self.figure)
-#         self.init_ui()
-
-#     def init_ui(self):
-#         self.setWindowTitle("График")
-#         ax = self.figure.add_subplot(111)
-#         ax.plot(self.x_list, self.y_list, label="f(x)")
-#         ax.set_xlabel("X")
-#         ax.set_ylabel("Y")
-#         ax.set_title(
-#             "Функция f(x) определяет отношение ρ на множестве\nХ = [0;5]: x₁ρх₂ ⇔ f(x₁) = f(x₂).",
-#             fontsize=14, wrap=True
-#         )
-#         ax.legend()
-#         ax.grid(True)
-#         ax.set_xlim([0, 5.2])
-#         ax.set_ylim([0, 4.2])
-#         ax.set_xticks(np.arange(0, 6, 1))
-#         ax.set_yticks(np.arange(0, 5, 1))
-
-#         layout = QtWidgets.QVBoxLayout()
-#         layout.addWidget(self.canvas)
-#         self.setLayout(layout)
-
-# class QuestionWindow(QtWidgets.QWidget):
-#     def __init__(self, task):
-#         super().__init__()
-#         self.task = task
-#         self.y_2, self.start_x_3, self.end_x_3, self.correct_more = self.task.get_question_data()
-#         self.input_2 = QtWidgets.QLineEdit()
-#         self.input_3 = QtWidgets.QLineEdit()
-#         self.input_more = QtWidgets.QLineEdit()
-#         self.submit_button = QtWidgets.QPushButton("Отправить")
-
-#         self.init_ui()
-#         self.submit_button.clicked.connect(self.submit)
-
-
-#     def init_ui(self):
-#         self.setWindowTitle("Вопросы")
-#         layout = QtWidgets.QVBoxLayout()
-#         # Текст перед полями ввода с увеличенным шрифтом
-#         instruction_label = QtWidgets.QLabel("Перечислите следующие классы эквивалентности:")
-#         instruction_font = QFont()
-#         instruction_font.setPointSize(12)  # Устанавливаем размер шрифта 14
-#         instruction_label.setFont(instruction_font)
-#         layout.addWidget(instruction_label)
-
-#         # Поля ввода с увеличенным шрифтом для меток
-#         form_layout = QtWidgets.QFormLayout()
-#         label_font = QFont()
-#         label_font.setPointSize(10)  # Устанавливаем размер шрифта 14 для меток
-
-#         # Создаем метки с заданным шрифтом
-#         label_2 = QtWidgets.QLabel(f"Класс эквивалентности [x]ᵨ, где x = {int(self.y_2)}:")
-#         label_2.setFont(label_font)
-#         form_layout.addRow(label_2, self.input_2)
-
-#         label_3 = QtWidgets.QLabel(f"Класс эквивалентности [x]ᵨ, где x ∈ ({self.start_x_3}; {self.end_x_3}):")
-#         label_3.setFont(label_font)
-#         form_layout.addRow(label_3, self.input_3)
-
-#         label_more = QtWidgets.QLabel(f"Класс эквивалентности [x]ᵨ, где x ∈ {self.correct_more}:")
-#         label_more.setFont(label_font)
-#         form_layout.addRow(label_more, self.input_more)
-
-#         layout.addLayout(form_layout)
-#         layout.addWidget(self.submit_button)
-#         self.setLayout(layout)
-
-
-#     def submit(self):
-#         user_2 = sorted([float(x.strip()) for x in self.input_2.text().split(";")])
-#         user_3 = self.input_3.text().split(";")
-#         user_more = self.input_more.text().replace(" ", "")
-
-#         result_2, result_3, result_more = self.task.check_answers(user_2, user_3, user_more)
-
-#         overall = "Задание выполнено успешно" if result_2 and result_3 and result_more else "Задание не выполнено"
-#         self.result_window = ResultWindow(overall)
-#         self.result_window.show()
-
-
-# class ResultWindow(QtWidgets.QWidget):
-#     def __init__(self, overall):
-#         super().__init__()
-#         self.overall = overall
-#         self.init_ui()
-
-#     def init_ui(self):
-#         self.setWindowTitle("Результаты")
-#         layout = QtWidgets.QVBoxLayout()
-#         label = QtWidgets.QLabel(f"{self.overall}")
-#         layout.addWidget(label)
-#         self.setLayout(layout)
-
-# class StartWindow(QtWidgets.QWidget):
-#     def __init__(self):
-#         super().__init__()
-#         self.setWindowTitle("Стартовое окно")
-#         layout = QtWidgets.QFormLayout()
-#         self.name_input = QtWidgets.QLineEdit()
-#         self.group_input = QtWidgets.QLineEdit()
-#         self.next_button = QtWidgets.QPushButton("Далее")
-
-#         layout.addRow("ФИО:", self.name_input)
-#         layout.addRow("Номер группы:", self.group_input)
-#         layout.addWidget(self.next_button)
-#         self.setLayout(layout)
-#         self.next_button.clicked.connect(self.start_task)
-
-#     def start_task(self):
-#         self.name = self.name_input.text()
-#         self.group = self.group_input.text()
-#         if not self.name or not self.group:
-#             QtWidgets.QMessageBox.warning(self, "Ошибка ввода", "Пожалуйста, введите ФИО и номер группы.")
-#             return
-
-#         self.start_time = datetime.now()
-#         self.task = Task() #Создаем задачу здесь
-#         self.graph_window = GraphWindow(self.task)
-#         self.question_window = QuestionWindow(self.task)
-#         self.graph_window.show()
-#         self.question_window.show()
-#         self.hide()
-
-
-
-# if __name__ == "__main__":
-#     app = QtWidgets.QApplication(sys.argv)
-#     start_window = StartWindow()
-#     start_window.show()
-#     sys.exit(app.exec_())

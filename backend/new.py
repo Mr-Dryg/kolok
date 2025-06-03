@@ -269,7 +269,7 @@ class Task:
         self.path = None
 
     def get_correct_ans_1(self):
-        x0 = self.y_2
+        x0 = self.x_2
         y0 = None
         for i in range(len(self.x_list)):
             if self.x_list[i] == x0:
@@ -337,6 +337,7 @@ class Task:
             self.start_x_3 = int(blocks[num][0])
             self.end_x_3 = self.start_x_3 + 1
             check = random.choice(blocks[num])
+            self.num = num
             check_y = next((self.y_list[i] for i in range(len(self.x_list)) if self.x_list[i] == check), None)
             self.correct_3 = sorted([x for x in self.x_list if self.y_list[self.x_list.index(x)] == check_y])
         else:
@@ -365,7 +366,7 @@ class Task:
             self.answer_more = ""
 
     def get_question_data(self):
-        # print(self.correct_more)
+        # print(self.correct_2, self.correct_3, self.correct_more)
         return self.x_2, self.start_x_3, self.end_x_3, self.answer_more
 
     def check_answers(self, user_2, user_3, user_more):
@@ -378,7 +379,12 @@ class Task:
         result_2 = set(user_2.split('U')) == set(self.get_correct_ans_1().split('U'))
 
         user_3 = user_3.strip('{').strip('}').split(";")
-        result_3 = len(self.correct_3) == 0 or (len(user_3) == 3 and set([round(eval(expr, {"x": self.correct_3[0]}), 2) for expr in user_3]) == set(self.correct_3))
+        # print(set([round(eval(expr, {"x": self.correct_3[0]}), 2) for expr in user_3]))
+        # print(set(self.correct_3))
+
+        result_3 = len(self.correct_3) == 0 or (len(user_3) == 3 and set([round(eval(expr, {"x": self.correct_3[self.num]}), 2) for expr in user_3]) == set(self.correct_3))
         
         result_more = set(user_more.replace(' ', '').split('U')) == set(self.correct_more.replace(' ', '').split('U'))
+        print(result_2, result_3, result_more)
         return result_2, result_3, result_more
+

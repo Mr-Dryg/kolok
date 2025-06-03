@@ -149,6 +149,7 @@ export default function Task() {
         </div>
         <div className="form-container">
           <h2>Составить ответ используя символы: U, <i>x</i>, [, ], {'{, }'}, цифры 0-9</h2>
+          <h2>Для разделения элементов в множестве используем ;</h2>
           <h2>Вопросы</h2>
           <form onSubmit={handleSubmit}>
             {getQuestions().map((question) => (

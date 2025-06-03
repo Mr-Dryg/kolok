@@ -74,7 +74,7 @@ export default function Result() {
       },
       {
         id: "q3",
-        text: `Класс эквивалентности [x]ρ, где x = ${taskData.correct_more}:`,
+        text: `Класс эквивалентности [x]ρ, где x ∈ ${taskData.correct_more}:`,
         type: "text",
       },
     ]

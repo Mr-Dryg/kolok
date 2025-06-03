@@ -28,7 +28,7 @@ start "Backend" cmd /k "cd backend && uv run uvicorn main:app --reload --host 0.
 
 :: Запуск frontend в новом окне
 :: !!! Перед запуском выполнить сборку (npm run build в ./frontend)
-start "Frontend" cmd /k "cd frontend && npm run build && npx http-server dist --port %frontend_port%"
+start "Frontend" cmd /k "cd frontend && npx http-server dist --port %frontend_port%"
 
 
 echo Servers started in separate windows
